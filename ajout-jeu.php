@@ -1,18 +1,21 @@
 <?php include('utils/utils.php'); 
 include('includes/header.php'); 
 
-
+// Si l'utilisateur n'est pas connecté, rediriger vers la page de connection
 if(!isset($_SESSION['id'])){
     header("Location:connection.php");
     exit;
 }
+// -------------------------------------------------------------------------
 
+// Récupérer la liste des categories
 try{
     $pdo = new PDO('mysql:host=localhost;dbname=ludotheque','root','root',[PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
     $rCategories=$pdo->prepare("SELECT c.nom_categorie , c.id_categorie FROM categorie c");
     $rCategories->execute();
     $categories = $rCategories->fetchAll(PDO::FETCH_ASSOC);
 }catch(EXCEPTION $error){die($error->getMessage());}
+// ---------------------------------
 ?>
 
 <body>
@@ -34,12 +37,11 @@ try{
         <button type="submit" name="nouveauJeu">Confirmer</button>
     </form>
 
-<!-- ------------------------------------------------------------------------------------- -->
 
 <?php
 try{
     $pdo = new PDO('mysql:host=localhost;dbname=ludotheque','root','root',[PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-
+    // Je récupère les données saisies par l'utilisateur et vérifie leur contenu
     if(isset($_POST['nouveauJeu'])){
         if(!empty($_POST['titre']) && !empty($_POST['min']) && !empty($_POST['max']) && !empty($_POST['duree']) && !empty($_POST['categorie'])){
             if(filter_var($_POST['min'], FILTER_VALIDATE_INT) && filter_var($_POST['max'], FILTER_VALIDATE_INT) && filter_var($_POST['duree'], FILTER_VALIDATE_INT) && filter_var($_POST['categorie'], FILTER_VALIDATE_INT)){
@@ -58,6 +60,16 @@ try{
 
                     if(!empty($game)) die("Ce jeu existe déjà !");
 
+                    // BONUS : Vérifier que la catégorie existe :
+                    $rCheckCategorie=$pdo->prepare("SELECT c.id_categorie FROM categorie WHERE c.id_categorie = ?");
+                    $rCheckCategorie->bindParam(1,$categorie,PDO::PARAM_INT);
+                    $rCheckCategorie->execute();
+                    $checkCategorie = $rCheckCategorie->fetch(PDO::FETCH_ASSOC);
+
+                    if(empty($checkCategorie)) die("La catégorie sélectionée n'existe pas !");
+                    // -----------------------------------------
+
+                    // Une fois les vérifications passées, j'entre le nouveau jeu en base de donnée
                     $rNouveauJeu=$pdo->prepare("INSERT INTO jeu (titre , joueurs_min , joueurs_max , duree , id_categorie , id_membre) VALUE (?,?,?,?,?,?)");
                     $rNouveauJeu->bindParam(1,$titre,PDO::PARAM_STR); 
                     $rNouveauJeu->bindParam(2,$min,PDO::PARAM_STR); 

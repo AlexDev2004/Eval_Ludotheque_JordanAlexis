@@ -12,9 +12,10 @@
 <body>
     <nav><?php 
         if(isset($_SESSION['prenom'])) { echo("
-            Bonjour $_SESSION[prenom].
+            <p>Bonjour $_SESSION[prenom].</p>
             <a href='../index.php'>Accueil</a>
             <a href='../ajout-jeu.php'>Ajouter un jeu</a>
+            <a href='../mon-compte.php'>Mon compte</a>
             <a href='../deconnection.php'>Déconnection</a>
         ");}else{ echo("
             <a href='../index.php'>Accueil</a>
