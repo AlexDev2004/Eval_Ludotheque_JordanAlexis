@@ -1,3 +1,6 @@
+<?php session_start(); ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,10 +10,17 @@
     <title>Ludothèque</title>
 </head>
 <body>
-    <nav>
-        <a href="../index.php">Accueil</a>
-        <a href="../connection.php">Connection</a>
-        <a href="../Inscription.php">Inscription</a>
-    </nav>
+    <nav><?php 
+        if(isset($_SESSION['prenom'])) { echo("
+            Bonjour $_SESSION[prenom].
+            <a href='../index.php'>Accueil</a>
+            <a href='../ajout-jeu.php'>Ajouter un jeu</a>
+            <a href='../deconnection.php'>Déconnection</a>
+        ");}else{ echo("
+            <a href='../index.php'>Accueil</a>
+            <a href='../connection.php'>Connection</a>
+            <a href='../Inscription.php'>Inscription</a>
+        ");}
+    ?></nav>
 </body>
 </html>

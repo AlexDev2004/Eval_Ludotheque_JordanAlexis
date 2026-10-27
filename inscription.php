@@ -1,6 +1,4 @@
-<?php session_start(); 
-
-include('includes/header.php'); ?>
+<?php include('includes/header.php'); ?>
 
 <body>
     <form action="#" method="post">

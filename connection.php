@@ -1,6 +1,4 @@
-<?php session_start(); 
-
-include('includes/header.php'); ?>
+<?php include('includes/header.php'); ?>
 
 <body>
     <form action="#" method="post">
@@ -13,24 +11,26 @@ include('includes/header.php'); ?>
 
     <?php
         try{
-           $pdo = new PDO('mysql:host=localhost;dbname=ludotheque','root','root',[PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-           $email = $_POST['email'];
-           $password = $_POST['password'];
-           $rConnect=$pdo->prepare("SELECT m.nom , m.prenom , m.email , m.id_membre , m.mot_de_passe FROM membre m WHERE m.email = ?");
-           $rConnect->bindParam(1,$email,PDO::PARAM_STR);
-           $rConnect->execute();
-           $userConnect = $rConnect->fetch(PDO::FETCH_ASSOC);
+            $pdo = new PDO('mysql:host=localhost;dbname=ludotheque','root','root',[PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+            if(isset($_POST['connection'])){
+                $email = $_POST['email'];
+                $password = $_POST['password'];
+                $rConnect=$pdo->prepare("SELECT m.nom , m.prenom , m.email , m.id_membre , m.mot_de_passe FROM membre m WHERE m.email = ?");
+                $rConnect->bindParam(1,$email,PDO::PARAM_STR);
+                $rConnect->execute();
+                $userConnect = $rConnect->fetch(PDO::FETCH_ASSOC);
 
-           if(empty($userConnect['email'])) die("L'adresse E-mail ou le mot de passe est invalide !");
-           if(!password_verify($password , $userConnect['mot_de_passe'])) die("L'adresse E-mail ou le mot de passe est invalide !");
+                if(empty($userConnect['email'])) die("L'adresse E-mail ou le mot de passe est invalide !");
+                if(!password_verify($password , $userConnect['mot_de_passe'])) die("L'adresse E-mail ou le mot de passe est invalide !");
 
-           $_SESSION['id'] = $userConnect['id_membre'];
-           $_SESSION['nom'] = $userConnect['nom'];
-           $_SESSION['prenom'] = $userConnect['prenom'];
-           $_SESSION['email'] = $userConnect['email'];
+                $_SESSION['id'] = $userConnect['id_membre'];
+                $_SESSION['nom'] = $userConnect['nom'];
+                $_SESSION['prenom'] = $userConnect['prenom'];
+                $_SESSION['email'] = $userConnect['email'];
 
-           header("Location:index.php");
-           exit;
+                header("Location:index.php");
+                exit;
+            }
         }catch(EXCEPTION $error){ die($error->getMessage());}
     ?>
 </body>
